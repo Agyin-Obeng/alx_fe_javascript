@@ -7,25 +7,30 @@
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     #quoteDisplay { margin: 20px 0; font-size: 1.5em; }
-    input { margin: 5px; padding: 5px; }
-    button { padding: 5px 10px; margin: 5px; }
+    input, select, button { margin: 5px; padding: 5px; }
     .quote { margin-bottom: 10px; }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
+  <!-- Category Filter -->
+  <label for="categoryFilter">Filter by Category:</label>
+  <select id="categoryFilter">
+    <option value="all">All Categories</option>
+  </select>
+
   <!-- Quote Display -->
   <div id="quoteDisplay"></div>
 
-  <!-- Buttons (Static for assignment) -->
+  <!-- Buttons -->
   <button id="newQuote">Show New Quote</button>
   <button id="exportQuotesBtn">Export Quotes</button>
 
   <!-- File input for importing JSON -->
   <input type="file" id="importFile" accept=".json">
 
-  <!-- Add Quote form will still be dynamically created -->
+  <!-- Add Quote form will be created dynamically by JS -->
 
   <script src="script.js"></script>
 </body>
