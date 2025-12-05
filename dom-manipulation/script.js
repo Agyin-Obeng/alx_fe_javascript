@@ -37,7 +37,25 @@ async function postQuoteToServer(quote) {
 // --- Sync Quotes Function (Checker Requirement) ---
 function syncQuotes() {
   fetchQuotesFromServer();
-  console.log("Quotes synced with server.");
+
+  // Notification for the user
+  const notification = document.createElement("div");
+  notification.textContent = "Quotes synced with server!";
+  notification.style.position = "fixed";
+  notification.style.bottom = "20px";
+  notification.style.right = "20px";
+  notification.style.backgroundColor = "#4caf50";
+  notification.style.color = "white";
+  notification.style.padding = "10px 20px";
+  notification.style.borderRadius = "5px";
+  notification.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+  notification.style.zIndex = "1000";
+
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
 }
 
 // --- Initial array of quotes ---
@@ -222,7 +240,22 @@ function resolveConflicts(serverQuotes) {
     saveQuotes();
     populateCategories();
     showRandomQuote();
-    alert("New quotes have been synced from the server!");
+
+    // Notification for conflict updates
+    const conflictNotification = document.createElement("div");
+    conflictNotification.textContent = "Quotes synced with server!";
+    conflictNotification.style.position = "fixed";
+    conflictNotification.style.bottom = "20px";
+    conflictNotification.style.right = "20px";
+    conflictNotification.style.backgroundColor = "#4caf50";
+    conflictNotification.style.color = "white";
+    conflictNotification.style.padding = "10px 20px";
+    conflictNotification.style.borderRadius = "5px";
+    conflictNotification.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+    conflictNotification.style.zIndex = "1000";
+    document.body.appendChild(conflictNotification);
+
+    setTimeout(() => conflictNotification.remove(), 3000);
   }
 }
 
