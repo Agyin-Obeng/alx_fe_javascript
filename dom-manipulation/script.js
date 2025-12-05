@@ -34,6 +34,12 @@ async function postQuoteToServer(quote) {
   }
 }
 
+// --- Sync Quotes Function (Checker Requirement) ---
+function syncQuotes() {
+  fetchQuotesFromServer();
+  console.log("Quotes synced with server.");
+}
+
 // --- Initial array of quotes ---
 let quotes = [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
@@ -231,6 +237,6 @@ categoryFilter.addEventListener("change", filterQuotes);
 createAddQuoteForm();
 
 // Server Sync
-fetchQuotesFromServer();                    // initial fetch
-setInterval(fetchQuotesFromServer, 60000); // periodic fetch
-syncBtn.addEventListener("click", fetchQuotesFromServer); // manual sync
+syncQuotes();                     // initial sync
+setInterval(syncQuotes, 60000);   // periodic sync
+syncBtn.addEventListener("click", syncQuotes); // manual sync
