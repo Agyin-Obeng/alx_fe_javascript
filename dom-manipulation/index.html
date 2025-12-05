@@ -8,24 +8,21 @@
     body { font-family: Arial, sans-serif; padding: 20px; }
     #quoteDisplay { margin: 20px 0; font-size: 1.5em; }
     input { margin: 5px; padding: 5px; }
-    button { padding: 5px 10px; }
+    button { padding: 5px 10px; margin: 5px; }
     .quote { margin-bottom: 10px; }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Quote display -->
+  <!-- Quote Display -->
   <div id="quoteDisplay"></div>
-  <button id="newQuote">Show New Quote</button>
 
-  <!-- Add new quote form -->
-  <div id="addQuoteForm">
-    <h2>Add a New Quote</h2>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button id="addQuoteBtn">Add Quote</button>
-  </div>
+  <!-- Buttons (Static for assignment) -->
+  <button id="newQuote">Show New Quote</button>
+  <button id="exportQuotesBtn">Export Quotes</button>
+
+  <!-- Import input will be created dynamically by JS -->
 
   <script src="script.js"></script>
 </body>
