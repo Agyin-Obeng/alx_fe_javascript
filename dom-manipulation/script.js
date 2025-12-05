@@ -23,6 +23,7 @@ loadQuotes();
 // Select DOM elements
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
+const exportQuotesBtn = document.getElementById("exportQuotesBtn");
 
 // Function to show a random quote
 function showRandomQuote() {
@@ -95,13 +96,6 @@ function exportToJson() {
   URL.revokeObjectURL(url);
 }
 
-function createExportButton() {
-  const btn = document.createElement("button");
-  btn.textContent = "Export Quotes";
-  btn.addEventListener("click", exportToJson);
-  document.body.appendChild(btn);
-}
-
 // --- JSON Import ---
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
@@ -135,6 +129,6 @@ function createImportInput() {
 // --- Initialization ---
 showRandomQuote();
 newQuoteBtn.addEventListener("click", showRandomQuote);
+exportQuotesBtn.addEventListener("click", exportToJson);
 createAddQuoteForm();
-createExportButton();
 createImportInput();
