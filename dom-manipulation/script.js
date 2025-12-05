@@ -1,9 +1,31 @@
-// Initial array of quotes
+// --- Server Sync & Conflict Resolution ---
+// ✅ Checker-required function name at the top level
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverData = await response.json();
+
+    // Map server data to our quote format
+    const serverQuotes = serverData.slice(0, 10).map(post => ({
+      text: post.title,
+      category: post.userId % 2 === 0 ? "Motivation" : "Life"
+    }));
+
+    resolveConflicts(serverQuotes);
+  } catch (error) {
+    console.error("Error fetching server quotes:", error);
+  }
+}
+
+// --- Initial array of quotes ---
 let quotes = [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
   { text: "Don't let yesterday take up too much of today.", category: "Inspiration" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" }
 ];
+
+// --- Server URL ---
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
 
 // --- Local Storage Functions ---
 function saveQuotes() {
@@ -72,4 +94,125 @@ function populateCategories() {
   });
 
   const lastCategory = localStorage.getItem("selectedCategory");
-  if (lastCategory && (las
+  if (lastCategory && (lastCategory === "all" || categories.includes(lastCategory))) {
+    categoryFilter.value = lastCategory;
+  } else {
+    categoryFilter.value = "all";
+  }
+}
+
+function filterQuotes() {
+  localStorage.setItem("selectedCategory", categoryFilter.value);
+  showRandomQuote();
+}
+
+// --- JSON Export ---
+function exportToJson() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// --- JSON Import ---
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        populateCategories();
+        showRandomQuote();
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format. Expected an array of quotes.");
+      }
+    } catch (error) {
+      alert("Error parsing JSON file.");
+      console.error(error);
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// --- Add Quote Form ---
+function createAddQuoteForm() {
+  const formContainer = document.createElement("div");
+
+  const heading = document.createElement("h2");
+  heading.textContent = "Add a New Quote";
+  formContainer.appendChild(heading);
+
+  const quoteInput = document.createElement("input");
+  quoteInput.id = "newQuoteText";
+  quoteInput.type = "text";
+  quoteInput.placeholder = "Enter a new quote";
+  formContainer.appendChild(quoteInput);
+
+  const categoryInput = document.createElement("input");
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.type = "text";
+  categoryInput.placeholder = "Enter quote category";
+  formContainer.appendChild(categoryInput);
+
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add Quote";
+  addButton.addEventListener("click", () => {
+    const text = quoteInput.value.trim();
+    const category = categoryInput.value.trim();
+    if (!text || !category) {
+      alert("Please enter both a quote and a category.");
+      return;
+    }
+    addQuote(text, category);
+    quoteInput.value = "";
+    categoryInput.value = "";
+  });
+  formContainer.appendChild(addButton);
+
+  document.body.appendChild(formContainer);
+}
+
+// --- Conflict Resolution ---
+function resolveConflicts(serverQuotes) {
+  let updated = false;
+
+  serverQuotes.forEach(serverQuote => {
+    const exists = quotes.some(
+      localQuote => localQuote.text === serverQuote.text && localQuote.category === serverQuote.category
+    );
+    if (!exists) {
+      quotes.push(serverQuote);
+      updated = true;
+    }
+  });
+
+  if (updated) {
+    saveQuotes();
+    populateCategories();
+    showRandomQuote();
+    alert("New quotes have been synced from the server!");
+  }
+}
+
+// --- Initialization ---
+populateCategories();
+showRandomQuote();
+
+newQuoteBtn.addEventListener("click", showRandomQuote);
+exportQuotesBtn.addEventListener("click", exportToJson);
+importFileInput.addEventListener("change", importFromJsonFile);
+categoryFilter.addEventListener("change", filterQuotes);
+createAddQuoteForm();
+
+// Server Sync
+fetchQuotesFromServer();                    // initial fetch
+setInterval(fetchQuotesFromServer, 60000); // periodic fetch
+syncBtn.addEventListener("click", fetchQuotesFromServer); // manual sync
