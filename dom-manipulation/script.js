@@ -1,11 +1,12 @@
-// --- Server Sync & Conflict Resolution ---
-// ✅ Checker-required function name at the top level
+// --- Server URL ---
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+
+// --- Checker-required fetch function ---
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
     const serverData = await response.json();
 
-    // Map server data to our quote format
     const serverQuotes = serverData.slice(0, 10).map(post => ({
       text: post.title,
       category: post.userId % 2 === 0 ? "Motivation" : "Life"
@@ -17,15 +18,28 @@ async function fetchQuotesFromServer() {
   }
 }
 
+// --- Post a new quote to server ---
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(quote)
+    });
+
+    const data = await response.json();
+    console.log("Quote posted to server:", data);
+  } catch (error) {
+    console.error("Error posting quote to server:", error);
+  }
+}
+
 // --- Initial array of quotes ---
 let quotes = [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
   { text: "Don't let yesterday take up too much of today.", category: "Inspiration" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" }
 ];
-
-// --- Server URL ---
-const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
 
 // --- Local Storage Functions ---
 function saveQuotes() {
@@ -76,10 +90,14 @@ function showRandomQuote() {
 
 // --- Add Quote ---
 function addQuote(text, category) {
-  quotes.push({ text, category });
+  const newQuote = { text, category };
+  quotes.push(newQuote);
   saveQuotes();
   populateCategories();
   showRandomQuote();
+
+  // Post the new quote to the server
+  postQuoteToServer(newQuote);
 }
 
 // --- Category Filtering ---
